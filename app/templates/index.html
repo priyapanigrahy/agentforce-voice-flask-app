@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XL's unofficial Agentforce Voice Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>XL's unofficial Voice Assistant</h1>
+            <p class="subtitle">AI-powered voice assistant for Agentforce</p>
+        </header>
+
+        <main>
+            <div class="conversation-container">
+                <div class="conversation" id="conversation">
+                    <div class="message assistant">
+                        <div class="avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <p>Hello! I'm your AI voice assistant. How can I help you today?</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="status-indicator">
+                    <span id="status-text">Ready</span>
+                    <div id="status-light" class="status-light"></div>
+                </div>
+                
+                <div class="button-group">
+                    <button id="hold-to-talk" class="primary-button">
+                        <i class="fas fa-microphone"></i>
+                        Hold to Talk
+                    </button>
+                    
+                    <button id="toggle-vad" class="secondary-button">
+                        <i class="fas fa-volume-up"></i>
+                        Toggle VAD
+                    </button>
+                    
+                    <button id="settings-button" class="icon-button">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Settings Modal -->
+        <div id="settings-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Settings</h2>
+                    <button id="close-settings" class="close-button">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-group">
+                        <h3>Voice Settings</h3>
+                        <div class="setting-item">
+                            <label for="voice-select">Assistant Voice</label>
+                            <select id="voice-select">
+                                <option value="alloy">Alloy</option>
+                                <option value="echo">Echo</option>
+                                <option value="fable">Fable</option>
+                                <option value="onyx">Onyx</option>
+                                <option value="nova">Nova</option>
+                                <option value="shimmer">Shimmer</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <h3>VAD Settings</h3>
+                        <div class="setting-item">
+                            <label for="vad-sensitivity">VAD Sensitivity</label>
+                            <input type="range" id="vad-sensitivity" min="0" max="100" value="50">
+                            <span id="vad-sensitivity-value">50%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <h3>Interface Settings</h3>
+                        <div class="setting-item checkbox">
+                            <input type="checkbox" id="dark-mode" checked>
+                            <label for="dark-mode">Dark Mode</label>
+                        </div>
+                        <div class="setting-item checkbox">
+                            <input type="checkbox" id="show-transcripts" checked>
+                            <label for="show-transcripts">Show Transcripts</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="save-settings" class="primary-button">Save Settings</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Microphone Permissions Modal -->
+        <div id="mic-permissions-modal" class="permissions-modal">
+            <div class="permissions-content">
+                <div class="permissions-icon">
+                    <i class="fas fa-microphone-slash"></i>
+                </div>
+                <h2 class="permissions-title">Microphone Access Required</h2>
+                <p class="permissions-description">
+                    To use the voice assistant, you need to allow microphone access in your browser.
+                    We detected that microphone permissions have not been granted or are blocked.
+                </p>
+                <div class="permissions-steps">
+                    <h3>How to enable microphone access:</h3>
+                    <ol>
+                        <li>Look for the microphone icon or permission dialog in your browser's address bar</li>
+                        <li>Click on it and select "Allow" for microphone access</li>
+                        <li>If you don't see this option, go to your browser settings:
+                            <ul>
+                                <li>Chrome: Settings → Privacy and Security → Site Settings → Microphone</li>
+                                <li>Safari: Preferences → Websites → Microphone</li>
+                                <li>Firefox: Preferences → Privacy & Security → Permissions → Microphone</li>
+                            </ul>
+                        </li>
+                        <li>Refresh this page after granting permission</li>
+                    </ol>
+                </div>
+                <button id="retry-mic-access" class="permissions-button">Try Again</button>
+                <button id="close-permissions-modal" class="secondary-button" style="margin-top: 10px;">Close</button>
+            </div>
+        </div>
+        
+        <div class="debug-panel" id="debug-panel">
+            <div class="debug-header">
+                <h3>Debug Panel</h3>
+                <button id="toggle-debug" class="toggle-debug">Toggle</button>
+            </div>
+            <div class="debug-content">
+                <div class="debug-section">
+                    <h4>Transcription</h4>
+                    <pre id="transcription-debug"></pre>
+                </div>
+                <div class="debug-section">
+                    <h4>VAD Status</h4>
+                    <pre id="vad-debug"></pre>
+                </div>
+                <div class="debug-section">
+                    <h4>API Responses</h4>
+                    <pre id="api-debug"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/audio-processor.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ui-controller.js') }}"></script>
+</body>
+</html>
