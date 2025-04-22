@@ -1,4 +1,4 @@
-# Claude Flask Voice Assistant
+# Agentforce Flask Voice Assistant
 
 A sleek, modern Flask application that functions as a voice assistant using OpenAI's APIs for real-time transcription, voice activity detection (VAD), and text-to-speech capabilities, with Salesforce AgentForce integration.
 
