@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Setup script for AgentForce credentials
+# Setup script for AgentForce credentials . 
 # This script will collect and store the necessary credentials to connect to Salesforce AgentForce
 
 # Print colorful messages
